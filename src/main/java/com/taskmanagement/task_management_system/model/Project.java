@@ -1,20 +1,47 @@
 package com.taskmanagement.task_management_system.model;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "project")
 public class Project {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "project_id")
 	private int projectId;
+
+	@Column(name = "name", nullable = false)
 	private String name;
+
+	@Column(name = "description")
 	private String description;
 
 	// Relationships from the UML
-	private Team team; // composition with Team
-	private ProjectManager manager; // managed by a ProjectManager
-	private final List<Sprint> sprints = new ArrayList<>(); // composition with Sprint
-	private final List<Task> tasks = new ArrayList<>(); // composition with Task
+	@OneToOne(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private Team team; // 1:1 (Team owns FK project_id)
+
+	@Transient
+	private ProjectManager manager; // not part of SQL schema
+
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Sprint> sprints = new ArrayList<>(); // 1:N
+
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Task> tasks = new ArrayList<>(); // 1:N
 
 	public Project() {
 	}
@@ -93,6 +120,7 @@ public class Project {
 		Objects.requireNonNull(task, "task");
 		if (!tasks.contains(task)) {
 			tasks.add(task);
+			task.setProject(this);
 		}
 	}
 

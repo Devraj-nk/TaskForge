@@ -1,21 +1,59 @@
 package com.taskmanagement.task_management_system.model;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import com.taskmanagement.task_management_system.model.User;
 
+@Entity
+@Table(name = "task")
 public class Task {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "task_id")
     private int taskId;
-    private String title;
-    private String description;
-    private int priority;          // 1 = HIGH, 2 = MEDIUM, 3 = LOW
-    private TaskStatus status;
-    private TeamMember assignedTo;
 
-    private final List<SubTask> subTasks = new ArrayList<>();
-    private final List<Dependency> dependencies = new ArrayList<>();
+    @Column(name = "title", nullable = false)
+    private String title;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "priority", nullable = false)
+    private int priority;          // 1 = HIGH, 2 = MEDIUM, 3 = LOW
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private TaskStatus status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id", nullable = false)
+    private Project project;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_to")
+    private User assignedTo;
+
+    @OneToMany(mappedBy = "parentTask", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SubTask> subTasks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "dependentTask", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Dependency> dependencies = new ArrayList<>();
 
     public Task() {
         this.status = TaskStatus.CREATED;
@@ -42,10 +80,18 @@ public class Task {
 
     public int getPriority() { return priority; }
 
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
     public TaskStatus getStatus() { return status; }
 
-    public TeamMember getAssignedTo() { return assignedTo; }
-    public void setAssignedTo(TeamMember member) {
+    public User getAssignedTo() { return assignedTo; }
+    public void setAssignedTo(User member) {
         this.assignedTo = member;
         if (this.status == TaskStatus.CREATED && member != null) {
             this.status = TaskStatus.ASSIGNED;

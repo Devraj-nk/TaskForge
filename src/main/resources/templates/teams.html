@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Teams</title>
+</head>
+<body>
+<div th:replace="~{fragments :: header('Teams')}"/>
+
+<h2>Create Team</h2>
+<form method="post" action="/teams">
+    <label>Name <input name="name" required/></label>
+    <button type="submit">Create</button>
+</form>
+
+<h2>All Teams</h2>
+<div th:if="${#lists.isEmpty(teams)}">No teams yet.</div>
+<ul th:if="${!#lists.isEmpty(teams)}">
+    <li th:each="t : ${teams}">
+        <a th:href="@{'/teams/' + ${t.teamId}}" th:text="${t.teamName}">Team</a>
+        <span> (id </span><span th:text="${t.teamId}"></span><span>)</span>
+    </li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${project.name}">Project</title>
+</head>
+<body>
+<div th:replace="~{fragments :: header('Project Details')}"/>
+
+<h2 th:text="${project.name}">Project Name</h2>
+<p th:text="${project.description}"></p>
+
+<h3>Team</h3>
+<div th:if="${project.team == null}">No team assigned.</div>
+<div th:if="${project.team != null}">
+    <span th:text="${project.team.teamName}"></span>
+    <span>(id </span><span th:text="${project.team.teamId}"></span><span>)</span>
+</div>
+
+<h3>Sprints</h3>
+<div th:if="${#lists.isEmpty(sprints)}">No sprints yet.</div>
+<ul th:if="${!#lists.isEmpty(sprints)}">
+    <li th:each="s : ${sprints}">
+        <span>Sprint </span><span th:text="${s.sprintId}"></span>
+        <span th:if="${s.startDate}"> — start: </span><span th:text="${s.startDate}"></span>
+        <span th:if="${s.endDate}"> — end: </span><span th:text="${s.endDate}"></span>
+    </li>
+</ul>
+
+<h3>Create Task</h3>
+<form th:action="@{'/projects/' + ${project.projectId} + '/tasks'}" method="post">
+    <label>Title <input name="title" required/></label>
+    <br/>
+    <label>Description <input name="description"/></label>
+    <br/>
+    <label>Priority
+        <select name="priority" required>
+            <option value="1">HIGH (1)</option>
+            <option value="2" selected>MEDIUM (2)</option>
+            <option value="3">LOW (3)</option>
+        </select>
+    </label>
+    <br/>
+    <button type="submit">Create Task</button>
+</form>
+
+<h3>Tasks</h3>
+<div th:if="${#lists.isEmpty(tasks)}">No tasks yet.</div>
+<table th:if="${!#lists.isEmpty(tasks)}" border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Priority</th>
+        <th>Assigned To</th>
+        <th>Open</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="t : ${tasks}">
+        <td th:text="${t.taskId}"></td>
+        <td th:text="${t.title}"></td>
+        <td th:text="${t.status}"></td>
+        <td th:text="${t.priority}"></td>
+        <td>
+            <span th:if="${t.assignedTo == null}">-</span>
+            <span th:if="${t.assignedTo != null}">
+                <span th:text="${t.assignedTo.name}"></span>
+                <span>(id </span><span th:text="${t.assignedTo.userId}"></span><span>)</span>
+            </span>
+        </td>
+        <td><a th:href="@{'/tasks/' + ${t.taskId}}">view</a></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

@@ -1,14 +1,43 @@
 package com.taskmanagement.task_management_system.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Transient;
 import java.util.Objects;
 
+@Entity
+@Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "user_id")
 	private int userId;
+
+	@Column(name = "name", nullable = false)
 	private String name;
+
+	@Column(name = "email", nullable = false, unique = true)
 	private String email;
+
+	@Column(name = "password", nullable = false)
 	private String password;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "role", nullable = false)
+	private Role role;
+
+	@Transient
 	private boolean loggedIn;
 
 	protected User() {
@@ -20,6 +49,14 @@ public abstract class User {
 		this.email = email;
 		this.password = password;
 		this.loggedIn = false;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
 	public int getUserId() {

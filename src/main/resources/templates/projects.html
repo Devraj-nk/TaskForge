@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Projects</title>
+</head>
+<body>
+<div th:replace="~{fragments :: header('Projects')}"/>
+
+<h2>Create Project</h2>
+<form method="post" action="/projects">
+    <label>Name <input name="name" required/></label>
+    <br/>
+    <label>Description <input name="description"/></label>
+    <br/>
+    <button type="submit">Create</button>
+</form>
+
+<h2>All Projects</h2>
+<div th:if="${#lists.isEmpty(projects)}">No projects yet.</div>
+<ul th:if="${!#lists.isEmpty(projects)}">
+    <li th:each="p : ${projects}">
+        <a th:href="@{'/projects/' + ${p.projectId}}" th:text="${p.name}">Project</a>
+        <span th:if="${p.description}"> - </span>
+        <span th:text="${p.description}"></span>
+    </li>
+</ul>
+
+</body>
+</html>

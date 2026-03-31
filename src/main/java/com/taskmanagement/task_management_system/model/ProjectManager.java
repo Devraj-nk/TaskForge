@@ -15,6 +15,7 @@ public class ProjectManager extends User {
 
     public ProjectManager(int userId, String name, String email, String password) {
         super(userId, name, email, password);
+		setRole(Role.PROJECT_MANAGER);
     }
 
     public List<Project> getManagedProjects() {

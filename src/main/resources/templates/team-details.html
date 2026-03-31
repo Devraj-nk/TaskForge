@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${team.teamName}">Team</title>
+</head>
+<body>
+<div th:replace="~{fragments :: header('Team Details')}"/>
+
+<h2>
+    <span th:text="${team.teamName}"></span>
+    <span>(id </span><span th:text="${team.teamId}"></span><span>)</span>
+</h2>
+
+<h3>Add Member</h3>
+<form th:action="@{'/teams/' + ${team.teamId} + '/members'}" method="post">
+    <label>Name <input name="name" required/></label>
+    <br/>
+    <label>Email <input name="email" required/></label>
+    <br/>
+    <label>Password <input name="password" type="password"/></label>
+    <br/>
+    <button type="submit">Add</button>
+</form>
+
+<h3>Members</h3>
+<div th:if="${#lists.isEmpty(members)}">No members yet.</div>
+<table th:if="${!#lists.isEmpty(members)}" border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>User ID</th>
+        <th>Name</th>
+        <th>Email</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="m : ${members}">
+        <td th:text="${m.userId}"></td>
+        <td th:text="${m.name}"></td>
+        <td th:text="${m.email}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

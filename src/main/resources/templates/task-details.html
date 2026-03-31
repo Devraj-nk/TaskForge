@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${task.title}">Task</title>
+</head>
+<body>
+<div th:replace="~{fragments :: header('Task Details')}"/>
+
+<h2>
+    <span th:text="${task.title}"></span>
+    <span>(id </span><span th:text="${task.taskId}"></span><span>)</span>
+</h2>
+
+<p th:text="${task.description}"></p>
+
+<p>
+    <strong>Status:</strong> <span th:text="${task.status}"></span>
+    <br/>
+    <strong>Priority:</strong> <span th:text="${task.priority}"></span>
+    <br/>
+    <strong>Assigned To:</strong>
+    <span th:if="${task.assignedTo == null}">-</span>
+    <span th:if="${task.assignedTo != null}">
+        <span th:text="${task.assignedTo.name}"></span>
+        <span>(id </span><span th:text="${task.assignedTo.userId}"></span><span>)</span>
+    </span>
+</p>
+
+<h3>Update Status</h3>
+<form th:action="@{'/tasks/' + ${task.taskId} + '/status'}" method="post">
+    <select name="status" required>
+        <option th:each="s : ${statuses}" th:value="${s.name()}" th:text="${s.name()}" th:selected="${task.status == s}"></option>
+    </select>
+    <button type="submit">Update</button>
+</form>
+
+<h3>Assign To Team Member</h3>
+<form th:action="@{'/tasks/' + ${task.taskId} + '/assign'}" method="post">
+    <label>Team member id <input name="teamMemberId" type="number" min="1" required/></label>
+    <button type="submit">Assign</button>
+</form>
+
+</body>
+</html>

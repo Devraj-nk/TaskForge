@@ -1,18 +1,40 @@
-
 package com.taskmanagement.task_management_system.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Entity
+@Table(name = "team_member")
 public class TeamMember extends User {
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id")
+    private Team team;
+
+    @OneToMany(mappedBy = "assignedTo")
     private List<Task> assignedTasks = new ArrayList<>();
 
     public TeamMember() {}
 
     public TeamMember(int userId, String name, String email, String password) {
         super(userId, name, email, password);
+        setRole(Role.TEAM_MEMBER);
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     // --- Getters ---

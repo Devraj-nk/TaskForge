@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="header(title)">
+    <h1 th:text="${title}">TaskForge</h1>
+    <nav>
+        <a href="/">Home</a>
+        <span> | </span>
+        <a href="/projects">Projects</a>
+        <span> | </span>
+        <a href="/teams">Teams</a>
+        <span> | </span>
+        <a href="/tasks">Tasks</a>
+    </nav>
+    <hr/>
+    <div th:if="${message}" style="padding:6px 0;">
+        <strong th:text="${message}">Message</strong>
+    </div>
+</header>
+</body>
+</html>

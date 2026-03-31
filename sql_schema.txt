@@ -1,0 +1,24 @@
+Core tables
+1.Project (project_id PK, name, description)
+2.Sprint(sprint_id PK, start_date, end_date, project_id FK)
+3.Task(task_id PK, title, description, priority, status, project_id FK, assigned_to FK)
+4.SubTask(subtask_id PK, title, status, task_id FK)
+5.Dependency(dependency_id PK, task_id FK, prerequisite_task_id FK)
+6.Team(team_id PK, team_name, project_id FK)
+7.User (Base table)(user_id PK, name, email, password, role)
+Roles:
+ADMIN
+PROJECT_MANAGER
+TEAM_MEMBER
+8.TeamMember (Optional specialization)(user_id PK/FK, team_id FK)
+
+ER Relationships Summary
+Relationship	Type
+Project → Task	1:N
+Project → Sprint	1:N
+Project → Team	1:1
+Task → SubTask	1:N
+Task → Dependency	1:N
+Task → Task (via Dependency)	N:N
+Team → TeamMember	1:N
+TeamMember → Task	1:N
