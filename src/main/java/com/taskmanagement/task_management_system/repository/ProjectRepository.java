@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
-	@EntityGraph(attributePaths = {"team", "tasks", "sprints"})
+	// Avoid Hibernate MultipleBagFetchException by not fetching multiple List (bag) collections at once.
+	@EntityGraph(attributePaths = {"team"})
 	Optional<Project> findWithDetailsByProjectId(int projectId);
 }

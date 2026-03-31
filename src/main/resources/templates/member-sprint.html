@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Sprint</title>
+</head>
+<body>
+<div th:replace="~{fragments :: header('Sprint')}"/>
+
+<div th:if="${project != null}">
+    <p>
+        <strong>Project:</strong> <span th:text="${project.name}"></span>
+        <span>(id </span><span th:text="${project.projectId}"></span><span>)</span>
+    </p>
+</div>
+
+<div th:if="${sprint == null}">
+    <p>Sprint not found.</p>
+</div>
+
+<div th:if="${sprint != null}">
+    <h2>
+        <span>Sprint </span><span th:text="${sprint.sprintId}"></span>
+    </h2>
+    <p>
+        <span th:if="${sprint.startDate}"><strong>Start:</strong> </span><span th:text="${sprint.startDate}"></span>
+        <br/>
+        <span th:if="${sprint.endDate}"><strong>End:</strong> </span><span th:text="${sprint.endDate}"></span>
+    </p>
+
+    <h3>All Project Tasks (by status)</h3>
+    <div th:if="${#lists.isEmpty(tasks)}">No tasks in this project.</div>
+
+    <div th:if="${!#lists.isEmpty(tasks)}" th:each="st : ${statuses}">
+        <h4 th:text="${st}"></h4>
+        <div th:if="${#lists.isEmpty(tasks.?[status == st])}">No tasks.</div>
+        <table th:if="${!#lists.isEmpty(tasks.?[status == st])}" border="1" cellpadding="6" cellspacing="0">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Priority</th>
+                <th>Assigned To</th>
+                <th>Blocked By</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="t : ${tasks.?[status == st]}">
+                <td th:text="${t.taskId}"></td>
+                <td th:text="${t.title}"></td>
+                <td th:text="${t.priority}"></td>
+                <td>
+                    <span th:if="${t.assignedTo == null}">-</span>
+                    <span th:if="${t.assignedTo != null}" th:text="${t.assignedTo.name}"></span>
+                </td>
+                <td>
+                    <span th:if="${#lists.isEmpty(blockersByTaskId[t.taskId])}">-</span>
+                    <ul th:if="${!#lists.isEmpty(blockersByTaskId[t.taskId])}">
+                        <li th:each="b : ${blockersByTaskId[t.taskId]}" th:text="${b}"></li>
+                    </ul>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<p><a href="/member">Back to dashboard</a></p>
+
+</body>
+</html>

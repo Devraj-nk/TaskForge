@@ -5,12 +5,32 @@
     <h1 th:text="${title}">TaskForge</h1>
     <nav>
         <a href="/">Home</a>
-        <span> | </span>
-        <a href="/projects">Projects</a>
-        <span> | </span>
-        <a href="/teams">Teams</a>
-        <span> | </span>
-        <a href="/tasks">Tasks</a>
+
+        <span th:if="${sessionUser == null}">
+            <span> | </span>
+            <a href="/login">Login</a>
+        </span>
+
+        <span th:if="${sessionUser != null && sessionUser.role().name() == 'PROJECT_MANAGER'}">
+            <span> | </span>
+            <a href="/projects">Projects</a>
+            <span> | </span>
+            <a href="/teams">Teams</a>
+            <span> | </span>
+            <a href="/tasks">Tasks</a>
+        </span>
+
+        <span th:if="${sessionUser != null && sessionUser.role().name() == 'TEAM_MEMBER'}">
+            <span> | </span>
+            <a href="/member">My Dashboard</a>
+        </span>
+
+        <span th:if="${sessionUser != null}">
+            <span> | </span>
+            <form method="post" action="/logout" style="display:inline;">
+                <button type="submit">Logout</button>
+            </form>
+        </span>
     </nav>
     <hr/>
     <div th:if="${message}" style="padding:6px 0;">

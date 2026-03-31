@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Login</title>
+</head>
+<body>
+<div th:replace="~{fragments :: header('Login')}"/>
+
+<form method="post" action="/login">
+    <label>Email <input name="email" type="email" required/></label>
+    <br/>
+    <label>Password <input name="password" type="password" required/></label>
+    <br/>
+    <button type="submit">Login</button>
+</form>
+
+</body>
+</html>

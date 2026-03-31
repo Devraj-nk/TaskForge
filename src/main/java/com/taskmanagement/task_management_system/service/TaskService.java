@@ -27,6 +27,10 @@ public class TaskService {
 		return taskRepository.findAll();
 	}
 
+	public List<Task> listTasksAssignedTo(int userId) {
+		return taskRepository.findByAssignedTo_UserId(userId);
+	}
+
 	public Task getTask(int taskId) {
 		return taskRepository.findById(taskId)
 				.orElseThrow(() -> new ResourceNotFoundException("Task " + taskId + " not found"));

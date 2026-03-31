@@ -85,4 +85,18 @@ public class ProjectService {
 		project.setTeam(team);
 		teamRepository.save(team);
 	}
+
+	@Transactional
+	public Team createAndAssignTeam(int projectId, String teamName) {
+		Project project = getProject(projectId);
+		if (teamName == null || teamName.isBlank()) {
+			throw new IllegalArgumentException("Team name is required");
+		}
+
+		Team team = new Team();
+		team.setTeamName(teamName.trim());
+		team.setProject(project);
+		project.setTeam(team);
+		return teamRepository.save(team);
+	}
 }
