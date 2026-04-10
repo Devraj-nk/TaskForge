@@ -34,8 +34,9 @@ public class TeamService {
 		if (name == null || name.isBlank()) {
 			throw new IllegalArgumentException("Team name is required");
 		}
-		Team team = new Team();
-		team.setTeamName(name.trim());
+		Team team = Team.builder()
+				.teamName(name.trim())
+				.build();
 		return teamRepository.save(team);
 	}
 

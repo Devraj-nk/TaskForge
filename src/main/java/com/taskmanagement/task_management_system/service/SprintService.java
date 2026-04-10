@@ -4,7 +4,7 @@ import com.taskmanagement.task_management_system.model.Project;
 import com.taskmanagement.task_management_system.model.Sprint;
 import com.taskmanagement.task_management_system.model.Task;
 import com.taskmanagement.task_management_system.repository.SprintRepository;
-import com.taskmanagement.task_management_system.service.planning.SprintPlanningStrategy;
+import com.taskmanagement.task_management_system.service.planning.SprintPlanner;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class SprintService {
 
 	private final ProjectService projectService;
-	private final SprintPlanningStrategy sprintPlanningStrategy;
+	private final SprintPlanner sprintPlanner;
 	private final SprintRepository sprintRepository;
 
-	public SprintService(ProjectService projectService, SprintPlanningStrategy sprintPlanningStrategy, SprintRepository sprintRepository) {
+	public SprintService(ProjectService projectService, SprintPlanner sprintPlanner, SprintRepository sprintRepository) {
 		this.projectService = projectService;
-		this.sprintPlanningStrategy = sprintPlanningStrategy;
+		this.sprintPlanner = sprintPlanner;
 		this.sprintRepository = sprintRepository;
 	}
 
@@ -38,7 +38,7 @@ public class SprintService {
 				.orElseThrow(() -> new ResourceNotFoundException("Sprint " + sprintId + " not found in project " + projectId));
 
 		List<Task> candidateTasks = new ArrayList<>(project.getTasks());
-		List<Task> selectedTasks = sprintPlanningStrategy.selectTasks(candidateTasks, capacity);
+			List<Task> selectedTasks = sprintPlanner.selectTasks(candidateTasks, capacity);
 
 		for (Task task : selectedTasks) {
 			sprint.planTask(task);

@@ -39,9 +39,10 @@ public class ProjectService {
 		if (name == null || name.isBlank()) {
 			throw new IllegalArgumentException("Project name is required");
 		}
-		Project project = new Project();
-		project.setName(name.trim());
-		project.setDescription(description);
+		Project project = Project.builder()
+				.name(name.trim())
+				.description(description)
+				.build();
 		return projectRepository.save(project);
 	}
 
@@ -66,9 +67,10 @@ public class ProjectService {
 	@Transactional
 	public Sprint createSprint(int projectId, Date startDate, Date endDate) {
 		Project project = getProject(projectId);
-		Sprint sprint = new Sprint();
-		sprint.setStartDate(startDate);
-		sprint.setEndDate(endDate);
+		Sprint sprint = Sprint.builder()
+				.startDate(startDate)
+				.endDate(endDate)
+				.build();
 		project.addSprint(sprint);
 		projectRepository.save(project);
 		return sprint;
@@ -93,9 +95,10 @@ public class ProjectService {
 			throw new IllegalArgumentException("Team name is required");
 		}
 
-		Team team = new Team();
-		team.setTeamName(teamName.trim());
-		team.setProject(project);
+		Team team = Team.builder()
+				.teamName(teamName.trim())
+				.project(project)
+				.build();
 		project.setTeam(team);
 		return teamRepository.save(team);
 	}
