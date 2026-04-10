@@ -18,6 +18,20 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "project")
+/**
+ * **Design patterns used:**
+ * - Domain Model (JPA Entity): this class is a persistence-backed domain entity.
+ * - Builder: `Project.builder()...build()` provides controlled object creation.
+ *
+ * **GRASP:**
+ * - Information Expert: owns and maintains its `tasks` and `sprints` collections and the
+ *   bidirectional links to `Task`/`Sprint`.
+ * - Creator: `addTask()` creates a new `Task` when needed.
+ *
+ * **SOLID:**
+ * - SRP: represents Project state + invariants (relationship consistency).
+ * - Encapsulation (supports maintainability): exposes unmodifiable views of collections.
+ */
 public class Project {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,6 +64,47 @@ public class Project {
 		this.projectId = projectId;
 		this.name = name;
 		this.description = description;
+	}
+
+	/**
+	 * Builder pattern entry-point.
+	 */
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	public static final class Builder {
+		private Integer projectId;
+		private String name;
+		private String description;
+
+		private Builder() {
+		}
+
+		public Builder projectId(int projectId) {
+			this.projectId = projectId;
+			return this;
+		}
+
+		public Builder name(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Builder description(String description) {
+			this.description = description;
+			return this;
+		}
+
+		public Project build() {
+			Project project = new Project();
+			if (projectId != null) {
+				project.setProjectId(projectId);
+			}
+			project.setName(name);
+			project.setDescription(description);
+			return project;
+		}
 	}
 
 	public int getProjectId() {
@@ -93,10 +148,12 @@ public class Project {
 	}
 
 	public List<Sprint> getSprints() {
+		// GRASP (Low Coupling) + SOLID (Encapsulation): callers can't mutate internal list directly.
 		return Collections.unmodifiableList(sprints);
 	}
 
 	public void addSprint(Sprint sprint) {
+		// GRASP (Information Expert): Project is responsible for keeping its Sprint relationship consistent.
 		Objects.requireNonNull(sprint, "sprint");
 		if (!sprints.contains(sprint)) {
 			sprints.add(sprint);
@@ -113,10 +170,12 @@ public class Project {
 	}
 
 	public List<Task> getTasks() {
+		// GRASP (Low Coupling) + SOLID (Encapsulation): prevents external mutation of internal list.
 		return Collections.unmodifiableList(tasks);
 	}
 
 	public void addTask(Task task) {
+		// GRASP (Information Expert): Project owns tasks and maintains the back-reference.
 		Objects.requireNonNull(task, "task");
 		if (!tasks.contains(task)) {
 			tasks.add(task);
@@ -130,6 +189,7 @@ public class Project {
 	 * Adds a new Task instance to this project.
 	 */
 	public void addTask() {
+		// GRASP (Creator): Project creates a Task because it aggregates/contains Tasks.
 		addTask(new Task());
 	}
 

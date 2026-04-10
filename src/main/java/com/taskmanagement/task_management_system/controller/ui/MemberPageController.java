@@ -105,34 +105,6 @@ public class MemberPageController {
             return "member-sprint";
         }
 
-        @PostMapping("/tasks/{taskId}/status")
-        public String updateMyTaskStatus(
-                @PathVariable int taskId,
-                @RequestParam String status,
-                HttpSession session,
-                RedirectAttributes redirectAttributes
-        ) {
-            Object value = session.getAttribute(SessionConstants.SESSION_USER);
-            if (!(value instanceof SessionUser sessionUser)) {
-                return "redirect:/login";
-            }
-
-            Task task = taskService.getTask(taskId);
-            if (task.getAssignedTo() == null || task.getAssignedTo().getUserId() != sessionUser.userId()) {
-                redirectAttributes.addFlashAttribute("message", "You can only update your own assigned tasks");
-                return "redirect:/member";
-            }
-
-            TaskStatus newStatus = TaskStatus.valueOf(status.trim().toUpperCase());
-            Task updated = taskService.updateTask(taskId, null, null, null, newStatus);
-            if (newStatus == TaskStatus.IN_PROGRESS && updated.getStatus() == TaskStatus.BLOCKED) {
-                redirectAttributes.addFlashAttribute("message", "Task is BLOCKED: complete prerequisites first");
-            } else {
-                redirectAttributes.addFlashAttribute("message", "Task status updated: " + updated.getStatus());
-            }
-            return "redirect:/member";
-        }
-
         int projectId = member.getTeam().getProject().getProjectId();
         Project project = projectService.getProject(projectId);
         Sprint sprint = sprintRepository.findById(sprintId).orElse(null);
@@ -148,6 +120,34 @@ public class MemberPageController {
         model.addAttribute("statuses", TaskStatus.values());
         model.addAttribute("blockersByTaskId", blockersByTaskId(tasks));
         return "member-sprint";
+    }
+
+    @PostMapping("/tasks/{taskId}/status")
+    public String updateMyTaskStatus(
+            @PathVariable int taskId,
+            @RequestParam String status,
+            HttpSession session,
+            RedirectAttributes redirectAttributes
+    ) {
+        Object value = session.getAttribute(SessionConstants.SESSION_USER);
+        if (!(value instanceof SessionUser sessionUser)) {
+            return "redirect:/login";
+        }
+
+        Task task = taskService.getTask(taskId);
+        if (task.getAssignedTo() == null || task.getAssignedTo().getUserId() != sessionUser.userId()) {
+            redirectAttributes.addFlashAttribute("message", "You can only update your own assigned tasks");
+            return "redirect:/member";
+        }
+
+        TaskStatus newStatus = TaskStatus.valueOf(status.trim().toUpperCase());
+        Task updated = taskService.updateTask(taskId, null, null, null, newStatus);
+        if (newStatus == TaskStatus.IN_PROGRESS && updated.getStatus() == TaskStatus.BLOCKED) {
+            redirectAttributes.addFlashAttribute("message", "Task is BLOCKED: complete prerequisites first");
+        } else {
+            redirectAttributes.addFlashAttribute("message", "Task status updated: " + updated.getStatus());
+        }
+        return "redirect:/member";
     }
 
     private Map<Integer, List<String>> blockersByTaskId(List<Task> tasks) {
