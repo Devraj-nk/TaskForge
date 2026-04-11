@@ -3,6 +3,7 @@ package com.taskmanagement.task_management_system.service;
 import com.taskmanagement.task_management_system.model.User;
 import com.taskmanagement.task_management_system.repository.UserRepository;
 import java.util.Optional;
+import java.util.Objects;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,6 +27,7 @@ public class AuthService {
         String normalizedPassword = password;
 
         return userRepository.findByEmail(normalizedEmail)
-                .filter(user -> user.login(normalizedEmail, normalizedPassword));
+            .filter(user -> Objects.equals(user.getEmail(), normalizedEmail)
+                && Objects.equals(user.getPassword(), normalizedPassword));
     }
 }

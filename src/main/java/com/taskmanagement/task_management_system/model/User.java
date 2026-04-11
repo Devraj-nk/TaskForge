@@ -8,11 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
-import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Table;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Transient;
-import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -37,18 +34,13 @@ public class User {
 	@Column(name = "role", nullable = false)
 	private Role role;
 
-	@Transient
-	private boolean loggedIn;
-
-	protected User() {
-	}
+	protected User() {}
 
 	protected User(int userId, String name, String email, String password) {
 		this.userId = userId;
 		this.name = name;
 		this.email = email;
 		this.password = password;
-		this.loggedIn = false;
 	}
 
 	public Role getRole() {
@@ -91,20 +83,5 @@ public class User {
 		this.password = password;
 	}
 
-	public boolean isLoggedIn() {
-		return loggedIn;
-	}
-
-	/**
-	 * Returns true when the supplied credentials match this user's stored credentials.
-	 */
-	public boolean login(String email, String password) {
-		boolean success = Objects.equals(this.email, email) && Objects.equals(this.password, password);
-		this.loggedIn = success;
-		return success;
-	}
-
-	public void logout() {
-		this.loggedIn = false;
-	}
+	// Authentication/session behavior intentionally excluded (SRP).
 }
