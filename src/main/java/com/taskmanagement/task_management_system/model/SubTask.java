@@ -30,7 +30,7 @@ public class SubTask {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id", nullable = false)
-    private Task parentTask;        // composition — SubTask belongs to a Task
+    private Task parentTask;
 
     public SubTask() {
         this.status = TaskStatus.CREATED;
@@ -41,6 +41,60 @@ public class SubTask {
         this.title = title;
         this.parentTask = parentTask;
         this.status = TaskStatus.CREATED;
+    }
+
+    // --- Builder Pattern ---
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private Integer subTaskId;
+        private String title;
+        private TaskStatus status;
+        private Task parentTask;
+
+        private Builder() {
+        }
+
+        public Builder subTaskId(int subTaskId) {
+            this.subTaskId = subTaskId;
+            return this;
+        }
+
+        public Builder title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder status(TaskStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder parentTask(Task parentTask) {
+            this.parentTask = parentTask;
+            return this;
+        }
+
+        public SubTask build() {
+            if (title == null || title.isBlank()) {
+                throw new IllegalArgumentException("SubTask title is required");
+            }
+            if (parentTask == null) {
+                throw new IllegalArgumentException("SubTask parentTask is required");
+            }
+
+            SubTask subTask = new SubTask();
+            if (subTaskId != null) {
+                subTask.subTaskId = subTaskId;
+            }
+            subTask.title = title.trim();
+            subTask.parentTask = parentTask;
+            subTask.status = (status != null ? status : TaskStatus.CREATED);
+            return subTask;
+        }
     }
 
     // --- Getters & Setters ---
