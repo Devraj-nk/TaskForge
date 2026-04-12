@@ -10,7 +10,9 @@
             </div>
 
             <nav class="tf-nav">
-                <a class="tf-pill tf-pill-primary" href="/">Home</a>
+                <span th:if="${sessionUser == null || sessionUser.role().name() == 'PROJECT_MANAGER'}">
+                    <a class="tf-pill tf-pill-primary" href="/">Home</a>
+                </span>
 
                 <span th:if="${sessionUser == null}">
                     <a class="tf-pill" href="/login">Login</a>
@@ -19,13 +21,12 @@
 
                 <span th:if="${sessionUser != null && sessionUser.role().name() == 'PROJECT_MANAGER'}">
                     <a class="tf-pill" href="/projects">Projects</a>
-                    <a class="tf-pill" href="/teams">Teams</a>
                     <a class="tf-pill" href="/members">Members</a>
                     <a class="tf-pill" href="/tasks">Tasks</a>
                 </span>
 
                 <span th:if="${sessionUser != null && sessionUser.role().name() == 'TEAM_MEMBER'}">
-                    <a class="tf-pill" href="/member">My Dashboard</a>
+                    <a class="tf-pill tf-pill-primary" href="/member">My Dashboard</a>
                 </span>
 
                 <span th:if="${sessionUser != null}">

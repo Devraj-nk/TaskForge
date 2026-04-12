@@ -3,6 +3,8 @@ package com.taskmanagement.task_management_system.service;
 import com.taskmanagement.task_management_system.model.Team;
 import com.taskmanagement.task_management_system.model.TeamMember;
 import com.taskmanagement.task_management_system.model.Role;
+import com.taskmanagement.task_management_system.model.Project;
+import com.taskmanagement.task_management_system.repository.ProjectRepository;
 import com.taskmanagement.task_management_system.repository.TeamRepository;
 import com.taskmanagement.task_management_system.repository.TeamMemberRepository;
 import java.util.List;
@@ -14,10 +16,12 @@ public class TeamService {
 
 	private final TeamRepository teamRepository;
 	private final TeamMemberRepository teamMemberRepository;
+	private final ProjectRepository projectRepository;
 
-	public TeamService(TeamRepository teamRepository, TeamMemberRepository teamMemberRepository) {
+	public TeamService(TeamRepository teamRepository, TeamMemberRepository teamMemberRepository, ProjectRepository projectRepository) {
 		this.teamRepository = teamRepository;
 		this.teamMemberRepository = teamMemberRepository;
+		this.projectRepository = projectRepository;
 	}
 
 	public List<Team> listTeams() {
@@ -66,5 +70,44 @@ public class TeamService {
 	public TeamMember getMember(int teamMemberId) {
 		return teamMemberRepository.findById(teamMemberId)
 				.orElseThrow(() -> new ResourceNotFoundException("TeamMember " + teamMemberId + " not found"));
+	}
+
+	@Transactional
+	public TeamMember assignMemberToProject(int teamMemberId, int projectId) {
+		TeamMember member = getMember(teamMemberId);
+		Project project = projectRepository.findById(projectId)
+				.orElseThrow(() -> new ResourceNotFoundException("Project " + projectId + " not found"));
+
+		Team targetTeam = project.getTeam();
+		if (targetTeam == null) {
+			// Since Project and Team are 1:1 in the current UI, create the Team automatically if missing.
+			targetTeam = Team.builder()
+					.teamName(project.getName())
+					.project(project)
+					.build();
+			targetTeam = teamRepository.save(targetTeam);
+			project.setTeam(targetTeam);
+		}
+
+		Team currentTeam = member.getTeam();
+		if (currentTeam != null && currentTeam.getTeamId() == targetTeam.getTeamId()) {
+			return member;
+		}
+		if (currentTeam != null) {
+			currentTeam.removeMember(member);
+		}
+		targetTeam.addMember(member);
+		return teamMemberRepository.save(member);
+	}
+
+	@Transactional
+	public TeamMember removeMemberFromTeam(int teamMemberId) {
+		TeamMember member = getMember(teamMemberId);
+		Team currentTeam = member.getTeam();
+		if (currentTeam != null) {
+			currentTeam.removeMember(member);
+		}
+		member.setTeam(null);
+		return teamMemberRepository.save(member);
 	}
 }

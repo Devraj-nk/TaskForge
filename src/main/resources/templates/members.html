@@ -27,6 +27,7 @@
                 <th>Email</th>
                 <th>Team</th>
                 <th>Project</th>
+                <th>Manage</th>
             </tr>
             </thead>
             <tbody>
@@ -47,6 +48,21 @@
                         <a th:href="@{'/projects/' + ${m.team.project.projectId}}" th:text="${m.team.project.name}"></a>
                         <span class="tf-muted">(id </span><span class="tf-muted" th:text="${m.team.project.projectId}"></span><span class="tf-muted">)</span>
                     </span>
+                </td>
+                <td>
+                    <form class="tf-inline" th:action="@{'/members/' + ${m.userId} + '/project'}" method="post">
+                        <div class="tf-actions">
+                            <select name="projectId">
+                                <option value="" th:selected="${m.team == null || m.team.project == null}">No project/team</option>
+                                <option th:each="p : ${projects}"
+                                        th:value="${p.projectId}"
+                                        th:selected="${m.team != null && m.team.project != null && m.team.project.projectId == p.projectId}"
+                                        th:text="${p.name + ' (id ' + p.projectId + ')'}">
+                                </option>
+                            </select>
+                            <button type="submit">Save</button>
+                        </div>
+                    </form>
                 </td>
             </tr>
             </tbody>

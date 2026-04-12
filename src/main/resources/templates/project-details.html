@@ -16,26 +16,14 @@
 <p th:text="${project.description}"></p>
 
 <h3>Team</h3>
-<div th:if="${project.team == null}">No team assigned.</div>
-<div th:if="${project.team != null}">
-    <span th:text="${project.team.teamName}"></span>
-    <span>(id </span><span th:text="${project.team.teamId}"></span><span>)</span>
-    <span> — </span>
-    <a th:href="@{'/teams/' + ${project.team.teamId}}">open team</a>
-</div>
-
-<div th:if="${project.team == null}">
-    <h4>Create & Assign Team</h4>
-    <form th:action="@{'/projects/' + ${project.projectId} + '/team'}" method="post">
-        <label>Team name <input name="teamName" required/></label>
-        <button type="submit">Create</button>
-    </form>
-
-    <h4>Assign Existing Team</h4>
-    <form th:action="@{'/projects/' + ${project.projectId} + '/team/assign'}" method="post">
-        <label>Team id <input name="teamId" type="number" min="1" required/></label>
-        <button type="submit">Assign</button>
-    </form>
+<div class="tf-section">
+    <p class="tf-muted" style="margin-bottom: 8px;">
+        Teams are treated as 1:1 with projects in the current UI.
+        Use the Members page to add/remove Team Members from this project's team.
+    </p>
+    <div class="tf-actions">
+        <a class="tf-pill" href="/members">Manage members</a>
+    </div>
 </div>
 
 <h3>Sprints</h3>
