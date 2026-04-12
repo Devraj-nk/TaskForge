@@ -2,39 +2,43 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <header th:fragment="header(title)">
-    <h1 th:text="${title}">TaskForge</h1>
-    <nav>
-        <a href="/">Home</a>
+    <div class="tf-page">
+        <div class="tf-header">
+            <div class="tf-brand">
+                <div class="tf-brand-title" th:text="${title}">TaskForge</div>
+                <div class="tf-brand-subtitle">Task management • sprints • dependencies</div>
+            </div>
 
-        <span th:if="${sessionUser == null}">
-            <span> | </span>
-            <a href="/login">Login</a>
-        </span>
+            <nav class="tf-nav">
+                <a class="tf-pill tf-pill-primary" href="/">Home</a>
 
-        <span th:if="${sessionUser != null && sessionUser.role().name() == 'PROJECT_MANAGER'}">
-            <span> | </span>
-            <a href="/projects">Projects</a>
-            <span> | </span>
-            <a href="/teams">Teams</a>
-            <span> | </span>
-            <a href="/tasks">Tasks</a>
-        </span>
+                <span th:if="${sessionUser == null}">
+                    <a class="tf-pill" href="/login">Login</a>
+                    <a class="tf-pill" href="/register">Register</a>
+                </span>
 
-        <span th:if="${sessionUser != null && sessionUser.role().name() == 'TEAM_MEMBER'}">
-            <span> | </span>
-            <a href="/member">My Dashboard</a>
-        </span>
+                <span th:if="${sessionUser != null && sessionUser.role().name() == 'PROJECT_MANAGER'}">
+                    <a class="tf-pill" href="/projects">Projects</a>
+                    <a class="tf-pill" href="/teams">Teams</a>
+                    <a class="tf-pill" href="/members">Members</a>
+                    <a class="tf-pill" href="/tasks">Tasks</a>
+                </span>
 
-        <span th:if="${sessionUser != null}">
-            <span> | </span>
-            <form method="post" action="/logout" style="display:inline;">
-                <button type="submit">Logout</button>
-            </form>
-        </span>
-    </nav>
-    <hr/>
-    <div th:if="${message}" style="padding:6px 0;">
-        <strong th:text="${message}">Message</strong>
+                <span th:if="${sessionUser != null && sessionUser.role().name() == 'TEAM_MEMBER'}">
+                    <a class="tf-pill" href="/member">My Dashboard</a>
+                </span>
+
+                <span th:if="${sessionUser != null}">
+                        <form class="tf-inline" th:action="@{/logout}" method="post">
+                        <button type="submit" class="tf-pill">Logout</button>
+                    </form>
+                </span>
+            </nav>
+        </div>
+
+        <div th:if="${message}" class="tf-alert">
+            <strong th:text="${message}">Message</strong>
+        </div>
     </div>
 </header>
 </body>

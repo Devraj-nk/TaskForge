@@ -43,6 +43,12 @@ public class User {
 		this.password = password;
 	}
 
+	public static User createProjectManager(String name, String email, String password) {
+		User user = new User(0, name, email, password);
+		user.setRole(Role.PROJECT_MANAGER);
+		return user;
+	}
+
 	public Role getRole() {
 		return role;
 	}

@@ -2,6 +2,7 @@ package com.taskmanagement.task_management_system.controller.ui;
 
 import com.taskmanagement.task_management_system.model.Task;
 import com.taskmanagement.task_management_system.model.TaskStatus;
+import com.taskmanagement.task_management_system.service.ProjectService;
 import com.taskmanagement.task_management_system.service.TaskService;
 import java.util.Locale;
 import org.springframework.stereotype.Controller;
@@ -18,14 +19,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class TaskPageController {
 
     private final TaskService taskService;
+    private final ProjectService projectService;
 
-    public TaskPageController(TaskService taskService) {
+    public TaskPageController(TaskService taskService, ProjectService projectService) {
         this.taskService = taskService;
+        this.projectService = projectService;
     }
 
     @GetMapping
     public String list(Model model) {
         model.addAttribute("tasks", taskService.listTasks());
+        model.addAttribute("projects", projectService.listProjects());
         model.addAttribute("statuses", TaskStatus.values());
         return "tasks";
     }

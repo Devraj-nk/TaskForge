@@ -4,34 +4,34 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="stylesheet" href="/app.css" th:href="@{/app.css}"/>
-    <title>Login</title>
+    <title>Register</title>
 </head>
 <body>
-<div th:replace="~{fragments :: header('Login')}"/>
+<div th:replace="~{fragments :: header('Register')}"/>
 
 <main class="tf-page">
     <section class="tf-main">
         <section class="tf-section">
-            <h2>Choose login type</h2>
-            <p class="tf-muted">Project Managers and Team Members use separate login pages.</p>
+            <h2>Choose account type</h2>
+            <p class="tf-muted">Create an account as a Project Manager or as a Team Member.</p>
         </section>
 
         <section class="tf-grid">
             <section class="tf-section">
                 <h3>Project Manager</h3>
-                <p class="tf-muted">Manage projects, teams, members, and tasks.</p>
+                <p class="tf-muted">Create projects/teams/tasks and view all members.</p>
                 <div class="tf-actions">
-                    <a class="tf-pill tf-pill-primary" href="/login/manager">Manager login</a>
-                    <a class="tf-pill" href="/register/manager">Register</a>
+                    <a class="tf-pill tf-pill-primary" href="/register/manager">Register as manager</a>
+                    <a class="tf-pill" href="/login/manager">Already have an account</a>
                 </div>
             </section>
 
             <section class="tf-section">
                 <h3>Team Member</h3>
-                <p class="tf-muted">View your dashboard and update your assigned tasks.</p>
+                <p class="tf-muted">Work on assigned tasks and track your sprint progress.</p>
                 <div class="tf-actions">
-                    <a class="tf-pill tf-pill-primary" href="/login/member">Member login</a>
-                    <a class="tf-pill" href="/register/member">Register</a>
+                    <a class="tf-pill tf-pill-primary" href="/register/member">Register as member</a>
+                    <a class="tf-pill" href="/login/member">Already have an account</a>
                 </div>
             </section>
         </section>

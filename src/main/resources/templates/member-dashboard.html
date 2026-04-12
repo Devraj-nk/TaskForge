@@ -2,10 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" th:href="@{/app.css}"/>
     <title>My Dashboard</title>
 </head>
 <body>
 <div th:replace="~{fragments :: header('Team Member Dashboard')}"/>
+
+<main class="tf-page">
+    <section class="tf-main">
 
 <div th:if="${member == null}">
     <p>Member not found.</p>
@@ -41,7 +46,7 @@
 
     <h3>My Tasks</h3>
     <div th:if="${#lists.isEmpty(myTasks)}">No tasks assigned to you.</div>
-    <table th:if="${!#lists.isEmpty(myTasks)}" border="1" cellpadding="6" cellspacing="0">
+    <table th:if="${!#lists.isEmpty(myTasks)}">
         <thead>
         <tr>
             <th>ID</th>
@@ -79,6 +84,9 @@
         </tbody>
     </table>
 </div>
+
+    </section>
+</main>
 
 </body>
 </html>

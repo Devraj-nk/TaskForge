@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="/app.css" th:href="@{/app.css}"/>
+    <title>Manager Login</title>
+</head>
+<body>
+<div th:replace="~{fragments :: header('Manager Login')}"/>
+
+<main class="tf-page">
+    <section class="tf-main">
+        <div class="tf-center">
+            <section class="tf-card">
+                <section class="tf-section">
+                    <h2>Project Manager sign in</h2>
+                    <p class="tf-muted">Managers only. Team Members should use Member Login.</p>
+
+                    <form method="post" th:action="@{/login/manager}">
+                        <label>
+                            Email
+                            <input name="email" type="email" autocomplete="username" placeholder="pm@taskforge.com" required/>
+                        </label>
+                        <label>
+                            Password
+                            <input name="password" type="password" autocomplete="current-password" required/>
+                        </label>
+
+                        <div class="tf-form-actions">
+                            <button type="submit">Login</button>
+                            <a class="tf-pill" href="/register/manager">Don’t have an account?</a>
+                            <a class="tf-pill" href="/login/member">Team Member login</a>
+                        </div>
+                    </form>
+                </section>
+            </section>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

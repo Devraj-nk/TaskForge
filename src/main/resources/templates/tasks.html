@@ -2,41 +2,104 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="/app.css" th:href="@{/app.css}"/>
     <title>Tasks</title>
 </head>
 <body>
 <div th:replace="~{fragments :: header('Tasks')}"/>
 
-<div th:if="${#lists.isEmpty(tasks)}">No tasks yet. Create one from a project.</div>
+<main class="tf-page">
+    <section class="tf-main">
 
-<table th:if="${!#lists.isEmpty(tasks)}" border="1" cellpadding="6" cellspacing="0">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Title</th>
-        <th>Status</th>
-        <th>Priority</th>
-        <th>Assigned To</th>
-        <th>Open</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="t : ${tasks}">
-        <td th:text="${t.taskId}"></td>
-        <td th:text="${t.title}"></td>
-        <td th:text="${t.status}"></td>
-        <td th:text="${t.priority}"></td>
-        <td>
-            <span th:if="${t.assignedTo == null}">-</span>
-            <span th:if="${t.assignedTo != null}">
-                <span th:text="${t.assignedTo.name}"></span>
-                <span>(id </span><span th:text="${t.assignedTo.userId}"></span><span>)</span>
-            </span>
-        </td>
-        <td><a th:href="@{'/tasks/' + ${t.taskId}}">view</a></td>
-    </tr>
-    </tbody>
-</table>
+<div class="tf-empty" th:if="${#lists.isEmpty(tasks)}">No tasks yet. Create one from a project.</div>
+
+<section th:if="${!#lists.isEmpty(tasks)}">
+    <section class="tf-section" th:each="p : ${projects}">
+        <div class="tf-row" style="justify-content: space-between;">
+            <div>
+                <h3 style="margin-bottom: 4px;">
+                    <span th:text="${p.name}"></span>
+                    <span class="tf-muted">(id </span><span class="tf-muted" th:text="${p.projectId}"></span><span class="tf-muted">)</span>
+                </h3>
+                <p class="tf-muted" th:if="${p.description}" th:text="${p.description}"></p>
+            </div>
+            <div class="tf-actions">
+                <a class="tf-pill" th:href="@{'/projects/' + ${p.projectId}}">Open project</a>
+            </div>
+        </div>
+
+        <div class="tf-empty" th:if="${#lists.isEmpty(p.tasks)}">No tasks for this project.</div>
+
+        <table th:if="${!#lists.isEmpty(p.tasks)}">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Assigned To</th>
+                <th>Open</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="t : ${p.tasks}">
+                <td th:text="${t.taskId}"></td>
+                <td th:text="${t.title}"></td>
+                <td>
+                    <span class="tf-badge"
+                          th:classappend="${t.status.name() == 'COMPLETED'} ? ' tf-badge--ok' : (${t.status.name() == 'BLOCKED'} ? ' tf-badge--danger' : '')"
+                          th:text="${t.status}"></span>
+                </td>
+                <td th:text="${t.priority}"></td>
+                <td>
+                    <span th:if="${t.assignedTo == null}">-</span>
+                    <span th:if="${t.assignedTo != null}">
+                        <span th:text="${t.assignedTo.name}"></span>
+                        <span class="tf-muted">(id </span><span class="tf-muted" th:text="${t.assignedTo.userId}"></span><span class="tf-muted">)</span>
+                    </span>
+                </td>
+                <td><a th:href="@{'/tasks/' + ${t.taskId}}">view</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="tf-section" th:if="${tasks.?[project == null].size() > 0}">
+        <h3>Unassigned Tasks</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Assigned To</th>
+                <th>Open</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="t : ${tasks.?[project == null]}">
+                <td th:text="${t.taskId}"></td>
+                <td th:text="${t.title}"></td>
+                <td th:text="${t.status}"></td>
+                <td th:text="${t.priority}"></td>
+                <td>
+                    <span th:if="${t.assignedTo == null}">-</span>
+                    <span th:if="${t.assignedTo != null}">
+                        <span th:text="${t.assignedTo.name}"></span>
+                        <span class="tf-muted">(id </span><span class="tf-muted" th:text="${t.assignedTo.userId}"></span><span class="tf-muted">)</span>
+                    </span>
+                </td>
+                <td><a th:href="@{'/tasks/' + ${t.taskId}}">view</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</section>
+
+    </section>
+</main>
 
 </body>
 </html>

@@ -18,7 +18,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         String path = request.getRequestURI();
 
-        if (path.equals("/") || path.startsWith("/login")) {
+        if (path.equals("/") || path.startsWith("/login") || path.startsWith("/register")) {
             return true;
         }
 
@@ -36,14 +36,14 @@ public class AuthInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        if (path.startsWith("/member")) {
+        if (path.equals("/member") || path.startsWith("/member/")) {
             if (sessionUser.role() != Role.TEAM_MEMBER) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 return false;
             }
         }
 
-        if (path.startsWith("/projects") || path.startsWith("/teams") || path.startsWith("/tasks")) {
+        if (path.startsWith("/projects") || path.startsWith("/teams") || path.startsWith("/tasks") || path.startsWith("/members")) {
             if (sessionUser.role() != Role.PROJECT_MANAGER) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 return false;

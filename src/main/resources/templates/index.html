@@ -2,12 +2,40 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="/app.css" th:href="@{/app.css}"/>
     <title>TaskForge</title>
 </head>
 <body>
 <div th:replace="~{fragments :: header('TaskForge')}"/>
 
-<p>Welcome. Use the links above to manage projects, teams, and tasks.</p>
+<main class="tf-page">
+    <section class="tf-main">
+
+        <section class="tf-hero">
+            <h1 class="tf-hero-title">TaskForge</h1>
+            <p class="tf-hero-subtitle">
+                Plan sprints, manage tasks, and coordinate teams with a clean UI and simple workflows.
+            </p>
+
+            <div class="tf-actions">
+                <a class="tf-pill tf-pill-primary" href="/login">Get started</a>
+                <a class="tf-pill" href="/projects">Projects</a>
+                <a class="tf-pill" href="/tasks">Tasks</a>
+                <a class="tf-pill" href="/teams">Teams</a>
+            </div>
+        </section>
+
+        <section class="tf-section">
+            <h3>Quick tips</h3>
+            <ul>
+                <li>Project Managers can create projects, teams, and tasks.</li>
+                <li>Team Members can view their dashboard and update task status.</li>
+            </ul>
+        </section>
+
+    </section>
+</main>
 
 </body>
 </html>

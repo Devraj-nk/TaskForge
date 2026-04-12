@@ -2,10 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" th:href="@{/app.css}"/>
     <title th:text="${task.title}">Task</title>
 </head>
 <body>
 <div th:replace="~{fragments :: header('Task Details')}"/>
+
+<main class="tf-page">
+    <section class="tf-main">
 
 <h2>
     <span th:text="${task.title}"></span>
@@ -40,6 +45,9 @@
     <label>Team member id <input name="teamMemberId" type="number" min="1" required/></label>
     <button type="submit">Assign</button>
 </form>
+
+    </section>
+</main>
 
 </body>
 </html>

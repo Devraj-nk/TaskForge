@@ -2,10 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" th:href="@{/app.css}"/>
     <title>Projects</title>
 </head>
 <body>
 <div th:replace="~{fragments :: header('Projects')}"/>
+
+<main class="tf-page">
+    <section class="tf-main">
 
 <h2>Create Project</h2>
 <form method="post" action="/projects">
@@ -25,6 +30,9 @@
         <span th:text="${p.description}"></span>
     </li>
 </ul>
+
+    </section>
+</main>
 
 </body>
 </html>

@@ -2,10 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" th:href="@{/app.css}"/>
     <title th:text="${project.name}">Project</title>
 </head>
 <body>
 <div th:replace="~{fragments :: header('Project Details')}"/>
+
+<main class="tf-page">
+    <section class="tf-main">
 
 <h2 th:text="${project.name}">Project Name</h2>
 <p th:text="${project.description}"></p>
@@ -72,7 +77,7 @@
 
 <h3>Tasks</h3>
 <div th:if="${#lists.isEmpty(tasks)}">No tasks yet.</div>
-<table th:if="${!#lists.isEmpty(tasks)}" border="1" cellpadding="6" cellspacing="0">
+<table th:if="${!#lists.isEmpty(tasks)}">
     <thead>
     <tr>
         <th>ID</th>
@@ -111,6 +116,9 @@
     <br/>
     <button type="submit">Create Dependency</button>
 </form>
+
+    </section>
+</main>
 
 </body>
 </html>
