@@ -1,10 +1,12 @@
 package com.taskmanagement.task_management_system.service;
 
 import com.taskmanagement.task_management_system.model.Project;
+import com.taskmanagement.task_management_system.model.SubTask;
 import com.taskmanagement.task_management_system.model.Task;
 import com.taskmanagement.task_management_system.model.TaskStatus;
 import com.taskmanagement.task_management_system.model.TeamMember;
 import com.taskmanagement.task_management_system.repository.ProjectRepository;
+import com.taskmanagement.task_management_system.repository.SubTaskRepository;
 import com.taskmanagement.task_management_system.repository.TaskRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -15,11 +17,13 @@ public class TaskService {
 
 	private final TaskRepository taskRepository;
 	private final ProjectRepository projectRepository;
+	private final SubTaskRepository subTaskRepository;
 	private final TeamService teamService;
 
-	public TaskService(TaskRepository taskRepository, ProjectRepository projectRepository, TeamService teamService) {
+	public TaskService(TaskRepository taskRepository, ProjectRepository projectRepository, SubTaskRepository subTaskRepository, TeamService teamService) {
 		this.taskRepository = taskRepository;
 		this.projectRepository = projectRepository;
+		this.subTaskRepository = subTaskRepository;
 		this.teamService = teamService;
 	}
 
@@ -92,5 +96,39 @@ public class TaskService {
 		task.setAssignedTo(member);
 		member.addAssignedTask(task);
 		return taskRepository.save(task);
+	}
+
+	@Transactional
+	public SubTask createSubTask(int taskId, String title) {
+		if (title == null || title.isBlank()) {
+			throw new IllegalArgumentException("Subtask title is required");
+		}
+		Task task = getTask(taskId);
+		SubTask subTask = SubTask.builder()
+				.title(title)
+				.parentTask(task)
+				.build();
+		task.addSubTask(subTask);
+		taskRepository.save(task);
+		return subTask;
+	}
+
+	@Transactional
+	public SubTask updateSubTaskStatus(int taskId, int subTaskId, TaskStatus status) {
+		if (status == null) {
+			throw new IllegalArgumentException("Subtask status is required");
+		}
+		SubTask subTask = subTaskRepository.findById(subTaskId)
+				.orElseThrow(() -> new ResourceNotFoundException("Subtask " + subTaskId + " not found"));
+
+		Task parentTask = subTask.getParentTask();
+		if (parentTask == null || parentTask.getTaskId() != taskId) {
+			throw new IllegalArgumentException("Subtask does not belong to task " + taskId);
+		}
+
+		subTask.updateStatus(status);
+		subTaskRepository.save(subTask);
+		taskRepository.save(parentTask);
+		return subTask;
 	}
 }

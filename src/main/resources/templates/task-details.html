@@ -46,6 +46,48 @@
     <button type="submit">Assign</button>
 </form>
 
+<h3>Subtasks</h3>
+
+<div class="tf-empty" th:if="${#lists.isEmpty(task.subTasks)}">No subtasks yet.</div>
+
+<table th:if="${!#lists.isEmpty(task.subTasks)}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Update</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="st : ${task.subTasks}">
+        <td th:text="${st.subTaskId}"></td>
+        <td th:text="${st.title}"></td>
+        <td>
+            <span class="tf-badge"
+                  th:classappend="${st.status.name() == 'COMPLETED'} ? ' tf-badge--ok' : (${st.status.name() == 'BLOCKED'} ? ' tf-badge--danger' : '')"
+                  th:text="${st.status}"></span>
+        </td>
+        <td>
+            <form class="tf-inline" th:action="@{'/tasks/' + ${task.taskId} + '/subtasks/' + ${st.subTaskId} + '/status'}" method="post">
+                <select name="status" required style="max-width: 220px; display: inline-block; margin: 0 8px 0 0; padding: 8px 10px;">
+                    <option th:each="s : ${statuses}" th:value="${s.name()}" th:text="${s.name()}" th:selected="${st.status == s}"></option>
+                </select>
+                <button type="submit">Update</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h4>Add Subtask</h4>
+<form th:action="@{'/tasks/' + ${task.taskId} + '/subtasks'}" method="post">
+    <label>Title
+        <input name="title" placeholder="e.g. Create wireframes" required/>
+    </label>
+    <button type="submit">Add</button>
+</form>
+
     </section>
 </main>
 

@@ -64,4 +64,36 @@ public class TaskPageController {
         redirectAttributes.addFlashAttribute("message", "Task assigned");
         return "redirect:/tasks/" + taskId;
     }
+
+    @PostMapping("/{taskId}/subtasks")
+    public String createSubTask(
+            @PathVariable int taskId,
+            @RequestParam String title,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            taskService.createSubTask(taskId, title);
+            redirectAttributes.addFlashAttribute("message", "Subtask created");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+        }
+        return "redirect:/tasks/" + taskId;
+    }
+
+    @PostMapping("/{taskId}/subtasks/{subTaskId}/status")
+    public String updateSubTaskStatus(
+            @PathVariable int taskId,
+            @PathVariable int subTaskId,
+            @RequestParam String status,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            TaskStatus newStatus = TaskStatus.valueOf(status.trim().toUpperCase(Locale.ROOT));
+            taskService.updateSubTaskStatus(taskId, subTaskId, newStatus);
+            redirectAttributes.addFlashAttribute("message", "Subtask status updated");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
+        }
+        return "redirect:/tasks/" + taskId;
+    }
 }
