@@ -18,10 +18,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import com.taskmanagement.task_management_system.model.User;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "task")
-public class Task {
+public class Task implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

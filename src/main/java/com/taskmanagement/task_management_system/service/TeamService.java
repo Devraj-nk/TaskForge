@@ -8,6 +8,8 @@ import com.taskmanagement.task_management_system.repository.ProjectRepository;
 import com.taskmanagement.task_management_system.repository.TeamRepository;
 import com.taskmanagement.task_management_system.repository.TeamMemberRepository;
 import java.util.List;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,16 +26,22 @@ public class TeamService {
 		this.projectRepository = projectRepository;
 	}
 
+	@Cacheable(cacheNames = "teams")
 	public List<Team> listTeams() {
 		return teamRepository.findAll();
 	}
 
+	@Cacheable(cacheNames = "teamById", key = "#teamId")
+	@Transactional(readOnly = true)
 	public Team getTeam(int teamId) {
-		return teamRepository.findById(teamId)
+		Team team = teamRepository.findWithDetailsByTeamId(teamId)
 				.orElseThrow(() -> new ResourceNotFoundException("Team " + teamId + " not found"));
+		team.getMembers().size();
+		return team;
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"teams", "teamById"}, allEntries = true)
 	public Team createTeam(String name) {
 		if (name == null || name.isBlank()) {
 			throw new IllegalArgumentException("Team name is required");
@@ -45,6 +53,7 @@ public class TeamService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"teams", "teamById"}, allEntries = true)
 	public TeamMember addMember(int teamId, String name, String email, String password) {
 		Team team = getTeam(teamId);
 		if (name == null || name.isBlank()) {
@@ -67,12 +76,15 @@ public class TeamService {
 		return teamMemberRepository.save(member);
 	}
 
+	@Cacheable(cacheNames = "teamMemberById", key = "#teamMemberId")
+	@Transactional(readOnly = true)
 	public TeamMember getMember(int teamMemberId) {
 		return teamMemberRepository.findById(teamMemberId)
 				.orElseThrow(() -> new ResourceNotFoundException("TeamMember " + teamMemberId + " not found"));
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"teams", "teamById", "teamMemberById", "projects", "projectById"}, allEntries = true)
 	public TeamMember assignMemberToProject(int teamMemberId, int projectId) {
 		TeamMember member = getMember(teamMemberId);
 		Project project = projectRepository.findById(projectId)
@@ -101,6 +113,7 @@ public class TeamService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"teams", "teamById", "teamMemberById"}, allEntries = true)
 	public TeamMember removeMemberFromTeam(int teamMemberId) {
 		TeamMember member = getMember(teamMemberId);
 		Team currentTeam = member.getTeam();

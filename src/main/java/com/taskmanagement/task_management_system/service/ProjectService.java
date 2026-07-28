@@ -8,6 +8,8 @@ import com.taskmanagement.task_management_system.repository.ProjectRepository;
 import com.taskmanagement.task_management_system.repository.TeamRepository;
 import java.util.Date;
 import java.util.List;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,16 +27,27 @@ public class ProjectService {
 		this.teamRepository = teamRepository;
 	}
 
+	@Cacheable(cacheNames = "projects")
 	public List<Project> listProjects() {
 		return projectRepository.findAll();
 	}
 
+	@Cacheable(cacheNames = "projectById", key = "#projectId")
+	@Transactional(readOnly = true)
 	public Project getProject(int projectId) {
-		return projectRepository.findWithDetailsByProjectId(projectId)
+		Project project = projectRepository.findWithDetailsByProjectId(projectId)
 				.orElseThrow(() -> new ResourceNotFoundException("Project " + projectId + " not found"));
+		project.getSprints().size();
+		project.getTasks().forEach(task -> {
+			if (task.getAssignedTo() != null) {
+				task.getAssignedTo().getUserId();
+			}
+		});
+		return project;
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"projects", "projectById"}, allEntries = true)
 	public Project createProject(String name, String description) {
 		if (name == null || name.isBlank()) {
 			throw new IllegalArgumentException("Project name is required");
@@ -47,6 +60,7 @@ public class ProjectService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"projects", "projectById"}, allEntries = true)
 	public Project updateProject(int projectId, String name, String description) {
 		Project project = getProject(projectId);
 		if (name != null && !name.isBlank()) {
@@ -59,12 +73,14 @@ public class ProjectService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"projects", "projectById"}, allEntries = true)
 	public void deleteProject(int projectId) {
 		Project project = getProject(projectId);
 		projectRepository.delete(project);
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"projects", "projectById"}, allEntries = true)
 	public Sprint createSprint(int projectId, Date startDate, Date endDate) {
 		Project project = getProject(projectId);
 		Sprint sprint = Sprint.builder()
@@ -77,6 +93,7 @@ public class ProjectService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"projects", "projectById"}, allEntries = true)
 	public void assignTeam(int projectId, int teamId) {
 		Project project = getProject(projectId);
 		Team team = teamRepository.findById(teamId)
@@ -89,6 +106,7 @@ public class ProjectService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"projects", "projectById"}, allEntries = true)
 	public Team createAndAssignTeam(int projectId, String teamName) {
 		Project project = getProject(projectId);
 		if (teamName == null || teamName.isBlank()) {

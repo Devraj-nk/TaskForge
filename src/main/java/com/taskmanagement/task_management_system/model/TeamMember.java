@@ -10,10 +10,13 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "team_member")
-public class TeamMember extends User {
+public class TeamMember extends User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")

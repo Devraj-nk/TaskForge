@@ -9,6 +9,8 @@ import com.taskmanagement.task_management_system.repository.ProjectRepository;
 import com.taskmanagement.task_management_system.repository.SubTaskRepository;
 import com.taskmanagement.task_management_system.repository.TaskRepository;
 import java.util.List;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,20 +29,43 @@ public class TaskService {
 		this.teamService = teamService;
 	}
 
+	@Cacheable(cacheNames = "tasks")
+	@Transactional(readOnly = true)
 	public List<Task> listTasks() {
-		return taskRepository.findAll();
+		List<Task> tasks = taskRepository.findAll();
+		tasks.forEach(task -> {
+			if (task.getAssignedTo() != null) {
+				task.getAssignedTo().getUserId();
+			}
+		});
+		return tasks;
 	}
 
+	@Cacheable(cacheNames = "tasksByAssignee", key = "#userId")
+	@Transactional(readOnly = true)
 	public List<Task> listTasksAssignedTo(int userId) {
-		return taskRepository.findByAssignedTo_UserId(userId);
+		List<Task> tasks = taskRepository.findByAssignedTo_UserId(userId);
+		tasks.forEach(task -> {
+			if (task.getAssignedTo() != null) {
+				task.getAssignedTo().getUserId();
+			}
+		});
+		return tasks;
 	}
 
+	@Cacheable(cacheNames = "taskById", key = "#taskId")
+	@Transactional(readOnly = true)
 	public Task getTask(int taskId) {
-		return taskRepository.findById(taskId)
+		Task task = taskRepository.findById(taskId)
 				.orElseThrow(() -> new ResourceNotFoundException("Task " + taskId + " not found"));
+		if (task.getAssignedTo() != null) {
+			task.getAssignedTo().getUserId();
+		}
+		return task;
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"tasks", "taskById", "tasksByAssignee"}, allEntries = true)
 	public Task createTask(int projectId, String title, String description, int priority) {
 		if (title == null || title.isBlank()) {
 			throw new IllegalArgumentException("Task title is required");
@@ -62,6 +87,7 @@ public class TaskService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"tasks", "taskById", "tasksByAssignee"}, allEntries = true)
 	public Task updateTask(int taskId, String title, String description, Integer priority, TaskStatus status) {
 		Task task = getTask(taskId);
 		if (title != null && !title.isBlank()) {
@@ -83,6 +109,7 @@ public class TaskService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"tasks", "taskById", "tasksByAssignee"}, allEntries = true)
 	public void deleteTask(int taskId) {
 		// Note: removing it from any project's task list is out-of-scope without a reverse index.
 		getTask(taskId);
@@ -90,6 +117,7 @@ public class TaskService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"tasks", "taskById", "tasksByAssignee"}, allEntries = true)
 	public Task assignTask(int taskId, int teamMemberId) {
 		Task task = getTask(taskId);
 		TeamMember member = teamService.getMember(teamMemberId);
@@ -99,6 +127,7 @@ public class TaskService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"tasks", "taskById", "tasksByAssignee"}, allEntries = true)
 	public SubTask createSubTask(int taskId, String title) {
 		if (title == null || title.isBlank()) {
 			throw new IllegalArgumentException("Subtask title is required");
@@ -114,6 +143,7 @@ public class TaskService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"tasks", "taskById", "tasksByAssignee"}, allEntries = true)
 	public SubTask updateSubTaskStatus(int taskId, int subTaskId, TaskStatus status) {
 		if (status == null) {
 			throw new IllegalArgumentException("Subtask status is required");

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "team")
@@ -30,7 +31,9 @@ import java.util.Objects;
  * - SRP: represents Team state + membership invariants (relationship consistency).
  * - Encapsulation (supports maintainability): exposes an unmodifiable view of members.
  */
-public class Team {
+public class Team implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

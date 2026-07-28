@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "sprint")
@@ -32,7 +33,9 @@ import java.util.Objects;
  *
  * **Related builder usage (planning):** `SprintPlanner.builder()` is used for task selection and is wired via `PlanningConfig`.
  */
-public class Sprint {
+public class Sprint implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

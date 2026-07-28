@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "project")
@@ -32,7 +33,9 @@ import java.util.Objects;
  * - SRP: represents Project state + invariants (relationship consistency).
  * - Encapsulation (supports maintainability): exposes unmodifiable views of collections.
  */
-public class Project {
+public class Project implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "project_id")
