@@ -29,7 +29,6 @@ import java.io.Serializable;
  *
  * **SOLID:**
  * - SRP: represents Team state + membership invariants (relationship consistency).
- * - Encapsulation (supports maintainability): exposes an unmodifiable view of members.
  */
 public class Team implements Serializable {
 
@@ -107,7 +106,7 @@ public class Team implements Serializable {
     public void setTeamName(String teamName) { this.teamName = teamName; }
 
     public List<TeamMember> getMembers() {
-        // GRASP (Low Coupling) + SOLID (Encapsulation): callers can't mutate the internal list directly.
+        // GRASP (Low Coupling)
         return Collections.unmodifiableList(members);
     }
 

@@ -29,8 +29,6 @@ import java.io.Serializable;
  *
  * **SOLID:**
  * - SRP: represents Sprint state + lifecycle rules.
- * - Encapsulation (supports maintainability): exposes unmodifiable views of internal collections.
- *
  * **Related builder usage (planning):** `SprintPlanner.builder()` is used for task selection and is wired via `PlanningConfig`.
  */
 public class Sprint implements Serializable {
@@ -130,7 +128,7 @@ public class Sprint implements Serializable {
     public void setProject(Project project) { this.project = project; }
 
     public List<Task> getPlannedTasks() {
-        // GRASP (Low Coupling) + SOLID (Encapsulation): callers can't mutate the internal list directly.
+        // GRASP (Low Coupling) + SOLID
         return Collections.unmodifiableList(plannedTasks);
     }
 

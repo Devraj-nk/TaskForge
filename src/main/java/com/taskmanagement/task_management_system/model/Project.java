@@ -31,7 +31,6 @@ import java.io.Serializable;
  *
  * **SOLID:**
  * - SRP: represents Project state + invariants (relationship consistency).
- * - Encapsulation (supports maintainability): exposes unmodifiable views of collections.
  */
 public class Project implements Serializable {
 
@@ -151,7 +150,7 @@ public class Project implements Serializable {
 	}
 
 	public List<Sprint> getSprints() {
-		// GRASP (Low Coupling) + SOLID (Encapsulation): callers can't mutate internal list directly.
+		// GRASP (Low Coupling) + SOLID (SRP)
 		return Collections.unmodifiableList(sprints);
 	}
 
@@ -173,7 +172,7 @@ public class Project implements Serializable {
 	}
 
 	public List<Task> getTasks() {
-		// GRASP (Low Coupling) + SOLID (Encapsulation): prevents external mutation of internal list.
+		// GRASP (Low Coupling) 
 		return Collections.unmodifiableList(tasks);
 	}
 
