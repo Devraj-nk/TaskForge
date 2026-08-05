@@ -23,6 +23,7 @@ It supports projects, teams, sprints, tasks, subtasks, and task dependencies (bl
 - Dependencies between tasks (a task can be blocked until prerequisites are completed)
 - Member dashboard to view and update assigned tasks
 - REST API for projects, tasks, teams, and sprints
+- Redis Cache for faster access to data like project, tasks, teams, sprints with TTL of 10 minutes
 
 ## Quick start
 

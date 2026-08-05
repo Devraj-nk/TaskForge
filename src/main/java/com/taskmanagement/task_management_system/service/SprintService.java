@@ -8,6 +8,7 @@ import com.taskmanagement.task_management_system.service.planning.SprintPlanner;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ public class SprintService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"projects", "projectById", "tasks", "taskById", "tasksByAssignee"}, allEntries = true)
 	public List<Task> planTasksForSprint(int projectId, int sprintId, int capacity) {
 		Project project = projectService.getProject(projectId);
 
@@ -38,7 +40,7 @@ public class SprintService {
 				.orElseThrow(() -> new ResourceNotFoundException("Sprint " + sprintId + " not found in project " + projectId));
 
 		List<Task> candidateTasks = new ArrayList<>(project.getTasks());
-			List<Task> selectedTasks = sprintPlanner.selectTasks(candidateTasks, capacity);
+		List<Task> selectedTasks = sprintPlanner.selectTasks(candidateTasks, capacity);
 
 		for (Task task : selectedTasks) {
 			sprint.planTask(task);
@@ -48,6 +50,7 @@ public class SprintService {
 	}
 
 	@Transactional
+	@CacheEvict(cacheNames = {"projects", "projectById", "tasks", "taskById", "tasksByAssignee"}, allEntries = true)
 	public Sprint startSprint(int sprintId) {
 		Sprint sprint = sprintRepository.findById(sprintId)
 				.orElseThrow(() -> new ResourceNotFoundException("Sprint " + sprintId + " not found"));
