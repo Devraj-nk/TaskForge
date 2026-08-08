@@ -34,4 +34,7 @@ build/
 
 ### Local secrets (do not commit) ###
 taskforge-secrets.properties
+!**/src/main/resources/application.properties
+application.properties
+/src/main/resources/application.properties
 .env
